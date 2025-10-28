@@ -136,15 +136,76 @@ asx-system-status-alerter/
 └── README.md
 ```
 
+## RSS Feed
+
+The application provides an RSS 2.0 feed of ASX system status alerts that can be subscribed to in any RSS reader.
+
+### RSS Endpoint
+
+```
+GET /api/rss
+```
+
+### Query Parameters
+
+| Parameter | Type | Description | Example |
+|-----------|------|-------------|---------|
+| `system` | string | Filter by specific ASX system | `ASX Trade` |
+| `status` | string | Filter by status type | `informational`, `partial`, `offline`, `normal` |
+| `limit` | number | Maximum number of alerts to return (default: 50) | `20` |
+
+### Examples
+
+**All alerts (default 50 most recent):**
+```
+https://yourdomain.com/api/rss
+```
+
+**ASX Trade alerts only:**
+```
+https://yourdomain.com/api/rss?system=ASX%20Trade
+```
+
+**Only informational and partial status alerts:**
+```
+https://yourdomain.com/api/rss?status=informational
+```
+
+**Last 10 CHESS alerts:**
+```
+https://yourdomain.com/api/rss?system=CHESS&limit=10
+```
+
+### Feed Features
+
+- **RSS 2.0 format** - Compatible with all RSS readers
+- **Rich metadata** - Includes system, status, start/close times
+- **HTML descriptions** - Full alert details with formatting
+- **Categories** - Alerts tagged by system and status for filtering
+- **Custom namespace** - Additional ASX-specific fields (`asx:system`, `asx:status`, etc.)
+- **TTL: 10 minutes** - Feed cached for 10 minutes for performance
+
+### Using with RSS Readers
+
+Add the feed URL to your favorite RSS reader:
+- Feedly
+- Inoreader
+- NewsBlur
+- Apple Mail
+- Thunderbird
+- Any RSS/Atom reader
+
+### Development Usage
+
+```bash
+# Development server
+http://localhost:3001/api/rss
+
+# With filters
+http://localhost:3001/api/rss?system=ASX%20Trade&limit=10
+```
+
 ## Future Features (Planned)
-
-The backend architecture is designed to support:
-
-### RSS Feed (`/api/rss`)
-- Generate RSS 2.0 or Atom feeds
-- Filter by system or status type
-- Configurable feed length
-- Subscribe via RSS readers
 
 ### Email Notifications (`/api/subscribe`, `/api/unsubscribe`)
 - Subscribe to alerts for specific systems
@@ -153,7 +214,7 @@ The backend architecture is designed to support:
 - Email confirmation and unsubscribe links
 - Background job to monitor changes and send notifications
 
-See placeholder implementations in `server/routes/` for detailed architecture plans.
+See `server/routes/notifications.js` for planned architecture.
 
 ## Styling
 
