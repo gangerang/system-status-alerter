@@ -48,9 +48,9 @@ const SearchFilters = ({ filters, onFilterChange }) => {
               onChange={(e) => handleChange('system', e.target.value)}
             >
               <option value="">ALL</option>
-              <option value={SYSTEMS.ASX_TRADE}>{SYSTEMS.ASX_TRADE}</option>
-              <option value={SYSTEMS.ASX24}>{SYSTEMS.ASX24}</option>
-              <option value={SYSTEMS.SUPPORTING}>{SYSTEMS.SUPPORTING}</option>
+              {Object.values(SYSTEMS).sort().map(system => (
+                <option key={system} value={system}>{system}</option>
+              ))}
             </select>
           </label>
         </div>

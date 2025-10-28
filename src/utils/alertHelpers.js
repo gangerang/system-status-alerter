@@ -18,8 +18,17 @@ export const STATUS_COLORS = {
 };
 
 export const SYSTEMS = {
+  ASX_BENCHMARKS: 'ASX Benchmarks',
+  ASX_COLLATERAL: 'ASX Collateral',
+  ASX_ONLINE: 'ASX Online',
   ASX_TRADE: 'ASX Trade',
   ASX24: 'ASX24 (NTP)',
+  AUSTRACLEAR: 'Austraclear',
+  CHESS: 'CHESS',
+  DATA_CENTRE_ALC: 'Data Centre: Australian Liquidity Centre (ALC)',
+  DCS: 'Derivatives Clearing System (DCS)',
+  GENIUM_CLEARING: 'Genium Clearing',
+  OTC_CLEARING: 'OTC Clearing',
   SUPPORTING: 'Supporting Services and Platforms'
 };
 
