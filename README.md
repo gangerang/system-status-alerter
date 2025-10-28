@@ -172,6 +172,134 @@ Works on all modern browsers supporting ES6+ and CSS Grid:
 - Firefox 88+
 - Safari 14+
 
+## Deployment to Coolify
+
+This application is ready for deployment to Coolify with a single Docker container that serves both the frontend and backend.
+
+### Prerequisites
+
+1. Coolify instance running and accessible
+2. GitHub repository with your code
+3. (Optional) Custom domain pointed to your Coolify server
+
+### Deployment Steps
+
+#### 1. Push Code to GitHub
+
+```bash
+git init
+git add .
+git commit -m "Initial commit: ASX System Status Alerter"
+git remote add origin <your-github-repo-url>
+git push -u origin main
+```
+
+#### 2. Create New Project in Coolify
+
+1. Log into your Coolify dashboard
+2. Click **+ New Resource** > **Public Repository**
+3. Select **GitHub** as the source
+4. Enter your repository URL
+5. Set **Branch** to `main` (or your default branch)
+
+#### 3. Configure Build Settings
+
+Coolify will auto-detect the Dockerfile. Verify these settings:
+
+- **Build Pack**: Dockerfile
+- **Dockerfile Location**: `./Dockerfile` (default)
+- **Port**: `3000` (automatically set from Dockerfile EXPOSE)
+
+#### 4. Set Environment Variables (Optional)
+
+In the Coolify service settings, add:
+
+```
+NODE_ENV=production
+PORT=3000
+```
+
+Note: Coolify automatically sets PORT, so this is usually not needed.
+
+#### 5. Configure Domain
+
+**Option A: Use Coolify Subdomain**
+- Coolify will provide a subdomain automatically (e.g., `https://abc123.yourdomain.com`)
+
+**Option B: Use Custom Domain**
+1. In Coolify service settings, go to **Domains**
+2. Add your custom domain (e.g., `asx-status.yourdomain.com`)
+3. Ensure your DNS A record points to your Coolify server IP
+4. Coolify will automatically provision SSL certificate via Let's Encrypt
+
+#### 6. Deploy
+
+1. Click **Deploy** button in Coolify
+2. Monitor the build logs
+3. Build process:
+   - Stage 1: Build frontend with Vite
+   - Stage 2: Copy production files and dependencies
+   - Start production server serving static files + API
+
+#### 7. Verify Deployment
+
+Once deployed, visit your domain and verify:
+- Frontend loads correctly
+- Status banner shows system statuses
+- Alert history displays data
+- Filters work properly
+- Check `/health` endpoint returns `{"status":"ok"}`
+
+### Architecture in Production
+
+```
+Internet
+    ↓
+Coolify (Reverse Proxy + SSL)
+    ↓
+Docker Container (Port 3000)
+    ├─ Express Server
+    │   ├─ /api/alerts → ASX API proxy
+    │   ├─ /api/rss (future)
+    │   ├─ /api/subscribe (future)
+    │   └─ Static files from /dist
+    └─ Built React Frontend
+```
+
+### Troubleshooting
+
+**Build fails:**
+- Check Coolify build logs for errors
+- Ensure all files are committed to Git
+- Verify Dockerfile syntax
+
+**App not loading:**
+- Check if container is running: Coolify > Service > Logs
+- Verify PORT environment variable
+- Check health endpoint: `https://yourdomain.com/health`
+
+**API not working:**
+- Check backend logs in Coolify
+- Ensure ASX API is accessible from your server
+- Verify firewall allows outbound HTTPS
+
+### Updating the Application
+
+1. Make changes to your code locally
+2. Commit and push to GitHub:
+   ```bash
+   git add .
+   git commit -m "Update: description"
+   git push
+   ```
+3. In Coolify, click **Redeploy** or enable **Auto Deploy** for automatic updates on push
+
+### Monitoring
+
+- **Health Check**: Built-in Docker health check monitors `/health` endpoint
+- **Logs**: View real-time logs in Coolify dashboard
+- **Metrics**: Coolify provides CPU, memory, and network usage metrics
+
 ## License
 
 This project is provided as-is for monitoring ASX system status.

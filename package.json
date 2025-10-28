@@ -8,7 +8,8 @@
     "server": "node server/index.js",
     "dev:all": "concurrently \"npm run server\" \"npm run dev\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server/production.js"
   },
   "dependencies": {
     "react": "^18.3.1",
