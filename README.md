@@ -26,41 +26,82 @@ A retro terminal-style web application for monitoring Australian Securities Exch
 
 ## Technology Stack
 
+### Frontend
 - **React 18** - Modern UI library
 - **Vite** - Fast build tool and dev server
 - **Custom CSS** - Retro terminal styling with CRT scanline effects
+
+### Backend
+- **Express** - Node.js web framework
+- **CORS** - Cross-origin resource sharing middleware
+- **node-fetch** - Fetch API for Node.js
 
 ## Installation
 
 ```bash
 # Install dependencies
 npm install
+```
 
-# Start development server
+## Development
+
+The application requires both frontend and backend servers to run:
+
+```bash
+# Option 1: Run both servers concurrently (recommended)
+npm run dev:all
+
+# Option 2: Run servers separately (in different terminals)
+# Terminal 1 - Backend server (runs on port 3001)
+npm run server
+
+# Terminal 2 - Frontend dev server (runs on port 5173)
 npm run dev
+```
 
-# Build for production
+**Important:** The backend server must be running for the application to fetch data from the ASX API. The backend acts as a proxy to avoid CORS issues.
+
+## Production Build
+
+```bash
+# Build frontend for production
 npm run build
 
-# Preview production build
+# Preview production build (frontend only)
 npm preview
+
+# For production deployment:
+# 1. Build the frontend: npm run build
+# 2. Deploy the 'dist' folder as static files
+# 3. Deploy the backend server separately (server/ folder)
+# 4. Update API_URL in src/utils/alertHelpers.js to point to your production backend
 ```
 
 ## Usage
 
-1. Open your browser to `http://localhost:5173/`
-2. View current system status in the top banner
-3. Scroll down to browse alert history
-4. Use filters to narrow down alerts
-5. Click any row to view detailed information
-6. Press ESC or click "CLOSE" to dismiss detail modal
+1. Start both servers using `npm run dev:all`
+2. Open your browser to `http://localhost:5173/`
+3. View current system status in the top banner
+4. Scroll down to browse alert history
+5. Use filters to narrow down alerts
+6. Click any row to view detailed information
+7. Press ESC or click "CLOSE" to dismiss detail modal
 
-## API
+## API Architecture
 
-The application fetches data from the ASX system status API:
+The application uses a client-server architecture:
+
 ```
-https://mcw59b7dl3hk0mnrsr49zd4b7jby.pub.sfmc-content.com/tezwp3l1olh?a=historyAll
+Browser (localhost:5173)
+    ↓ /api/alerts
+Vite Proxy
+    ↓
+Backend Server (localhost:3001)
+    ↓
+ASX API (https://mcw59b7dl3hk0mnrsr49zd4b7jby.pub.sfmc-content.com/...)
 ```
+
+The backend proxy solves CORS issues and provides a foundation for future features like RSS feeds and email notifications.
 
 Data refreshes automatically every 120 seconds (configurable in `src/App.jsx`).
 
@@ -68,7 +109,7 @@ Data refreshes automatically every 120 seconds (configurable in `src/App.jsx`).
 
 ```
 asx-system-status-alerter/
-├── src/
+├── src/                          # Frontend source code
 │   ├── components/
 │   │   ├── AlertDetails.jsx      # Modal for detailed alert view
 │   │   ├── AlertHistory.jsx      # Alert history table with filtering
@@ -83,11 +124,36 @@ asx-system-status-alerter/
 │   │   └── terminal.css          # Retro terminal styling
 │   ├── App.jsx                   # Main application component
 │   └── main.jsx                  # Application entry point
+├── server/                       # Backend server
+│   ├── routes/
+│   │   ├── alerts.js             # Alert proxy endpoint
+│   │   ├── rss.js                # RSS feed (placeholder for future)
+│   │   └── notifications.js      # Email notifications (placeholder)
+│   └── index.js                  # Express server entry point
 ├── index.html
 ├── package.json
 ├── vite.config.js
 └── README.md
 ```
+
+## Future Features (Planned)
+
+The backend architecture is designed to support:
+
+### RSS Feed (`/api/rss`)
+- Generate RSS 2.0 or Atom feeds
+- Filter by system or status type
+- Configurable feed length
+- Subscribe via RSS readers
+
+### Email Notifications (`/api/subscribe`, `/api/unsubscribe`)
+- Subscribe to alerts for specific systems
+- Filter by status types (only critical alerts)
+- Configurable notification frequency (instant, daily digest)
+- Email confirmation and unsubscribe links
+- Background job to monitor changes and send notifications
+
+See placeholder implementations in `server/routes/` for detailed architecture plans.
 
 ## Styling
 

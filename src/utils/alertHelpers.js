@@ -1,6 +1,7 @@
 // Alert helper functions
 
-export const API_URL = 'https://mcw59b7dl3hk0mnrsr49zd4b7jby.pub.sfmc-content.com/tezwp3l1olh?a=historyAll';
+// Use backend proxy API to avoid CORS issues
+export const API_URL = '/api/alerts';
 
 export const STATUS_TYPES = {
   NORMAL: 'normal',
