@@ -1,7 +1,7 @@
 # Multi-stage build for ASX System Status Alerter
 
 # Stage 1: Build the frontend
-FROM node:20-alpine AS frontend-builder
+FROM node:24-alpine AS frontend-builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production runtime
-FROM node:20-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
